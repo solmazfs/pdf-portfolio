@@ -1,0 +1,214 @@
+\documentclass[twoside,a4paper]{article}
+\usepackage[left=.8in,right=.8in,top=1in,bottom=1in]{geometry}
+\usepackage{fancyhdr,graphicx,caption,etoolbox,titletoc,lmodern}
+\usepackage[T1]{fontenc}
+\usepackage{imfellEnglish}
+\renewcommand{\familydefault}{\ttdefault}
+\usepackage{tikz}
+
+\edef\PortfolioCoverAuthorText{$author$}
+\def\PortfolioCoverAuthor#1 #2\relax{\shortstack[l]{\MakeUppercase{#1}\\[.2em]\MakeUppercase{#2}}}
+\newsavebox{\PortfolioCoverImageBox}
+
+\newcommand{\PortfolioTexture}{%
+    \begin{tikzpicture}[remember picture,overlay]
+        \node[inner sep=0pt,opacity=.5] at (current page.center)
+        {\includegraphics[width=\paperwidth,height=\paperheight]{assets/texture.png}};
+    \end{tikzpicture}%
+}
+
+\newcommand{\PortfolioCoverImage}{%
+    \savebox{\PortfolioCoverImageBox}{\includegraphics{$cover-image$}}%
+    \begin{tikzpicture}[remember picture,overlay]
+        \begin{scope}
+            \clip ([xshift=20mm,yshift=20mm]current page.south west)
+            rectangle ([xshift=140mm,yshift=180mm]current page.south west);
+            \ifdim\wd\PortfolioCoverImageBox<.75\ht\PortfolioCoverImageBox
+                \node[anchor=center,inner sep=0pt]
+                at ([xshift=80mm,yshift=100mm]current page.south west)
+                {\includegraphics[width=12cm]{$cover-image$}};
+            \else
+                \node[anchor=center,inner sep=0pt]
+                at ([xshift=80mm,yshift=100mm]current page.south west)
+                {\includegraphics[height=16cm]{$cover-image$}};
+            \fi
+        \end{scope}
+    \end{tikzpicture}%
+}
+
+\newcommand{\PortfolioCover}{%
+    \clearpage
+    \newgeometry{margin=1in}
+    \begin{titlepage}
+        \thispagestyle{empty}
+        \PortfolioTexture
+        \begingroup
+        \imfellEnglish
+        \begin{tikzpicture}[remember picture,overlay]
+            \node[anchor=north west,inner sep=0pt,align=left]
+            at ([xshift=20mm,yshift=-28mm]current page.north west)
+            {{\fontsize{42pt}{46pt}\selectfont $title$}};
+
+            \node[anchor=north west,inner sep=0pt,align=left]
+            at ([xshift=20mm,yshift=-76mm]current page.north west)
+            {{\fontsize{31pt}{35pt}\selectfont
+            \expandafter\PortfolioCoverAuthor\PortfolioCoverAuthorText\relax}};
+
+            \node[anchor=west,rotate=90,inner sep=0pt]
+            at ([xshift=-17mm,yshift=1in]current page.south east)
+            {{\fontsize{34pt}{38pt}\selectfont
+            $start$-\the\year\hspace{6em}VOL-01.}};
+        \end{tikzpicture}
+        \PortfolioCoverImage
+        \endgroup
+    \end{titlepage}
+    \restoregeometry
+    \clearpage
+}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1.2em}
+\raggedright
+
+\fancyhf{}
+\fancyhead[LO,LE]{\strut $author$}
+\fancyhead[CO,CE]{\strut PDF Portfolio}
+\fancyfoot[LE,RO]{\strut\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\pagestyle{fancy}
+
+\makeatletter
+\renewcommand{\@pnumwidth}{2.2em}
+\let\oldsection\section
+\renewcommand{\section}{\@ifstar{\oldsection*}{\PortfolioSection}}
+\makeatother
+
+\renewcommand{\contentsname}{\textbf{CONTENTS}}
+\titlecontents{section}[1cm]
+    {\addvspace{1em}\Huge}{}{}
+    {\titlerule*[8pt]{.}\contentspage}
+\titlecontents{subsection}[1.4cm]
+    {\addvspace{1em}\Large}{}{}
+    {\titlerule*[8pt]{.}\contentspage}
+
+\newcommand{\PortfolioSection}[1]{%
+    \clearpage
+    \null
+    \addcontentsline{toc}{section}{\MakeUppercase{#1}}%
+}
+
+\newcommand{\PortfolioGalleryRowThree}[7]{%
+    \begin{figure}#1
+        \centering
+        \includegraphics[width=#2\textwidth]{#3}\hfill
+        \includegraphics[width=#4\textwidth]{#5}\hfill
+        \includegraphics[width=#6\textwidth]{#7}
+    \end{figure}%
+}
+
+\newcommand{\PortfolioGalleryStaggeredThree}[7]{%
+    \begin{figure}#1
+        \centering
+        \raisebox{-.5\height}{\includegraphics[width=#2\textwidth]{#3}}\hfill
+        \raisebox{.5\height}{\includegraphics[width=#4\textwidth]{#5}}\hfill
+        \includegraphics[width=#6\textwidth]{#7}
+    \end{figure}%
+}
+
+\newcommand{\PortfolioGalleryStaggeredTwo}[5]{%
+    \begin{figure}#1
+        \centering
+        \raisebox{-.9\height}{\includegraphics[width=#2\textwidth]{#3}}\hfill
+        \includegraphics[width=#4\textwidth]{#5}
+    \end{figure}%
+}
+
+\newcommand{\PortfolioArtwork}[6]{%
+    \begin{figure}#1
+        \ifstrequal{#3}{right}{\raggedleft}
+        {\ifstrequal{#3}{left}{\raggedright}{\centering}}
+        \includegraphics[width=#2\textwidth]{#5}
+        \captionsetup{justification=#4,singlelinecheck=false}
+        \caption{#6}
+    \end{figure}%
+}
+
+\newcommand{\PortfolioArtworkNoCaption}[4]{%
+    \begin{figure}#1
+        \ifstrequal{#3}{right}{\raggedleft}
+        {\ifstrequal{#3}{left}{\raggedright}{\centering}}
+        \includegraphics[width=#2\textwidth]{#4}
+    \end{figure}%
+}
+
+\newenvironment{portfoliointro}[1]{%
+    \vspace*{\fill}{\Huge #1\par}\Large
+}{%
+    \vspace*{\fill}\normalsize
+}
+
+\newcommand{\portfolioclosing}[3]{%
+    \clearpage
+    \fancyhf{}
+    \begin{center}
+        \vspace*{\fill}
+        {\Huge #1\par}
+        \vspace*{\fill}
+        \setlength{\parskip}{0em}
+        #2\par
+        \vspace{1em}
+        #3\par
+        \vspace*{\fill}
+        \vspace*{\fill}
+    \end{center}
+}
+
+\newcommand{\portfoliolicense}{%
+    \clearpage
+    \thispagestyle{empty}
+    \PortfolioTexture
+    \begingroup
+    \imfellEnglish
+    \begin{tikzpicture}[remember picture,overlay]
+        \node[
+            anchor=south east,
+            inner sep=0pt,
+            text width=9cm,
+            align=right
+        ] at ([xshift=-20mm,yshift=20mm]current page.south east) {
+            {\fontsize{20pt}{24pt}\selectfont CC-BY-ND-NC\par}
+            \vspace{1.2em}
+            {\fontsize{11pt}{16pt}\selectfont
+            Original author: $author$\par
+            \vspace{.8em}
+            This content is licensed under CC-BY-ND-NC. Under this license,
+            the content may be used for non-commercial purposes only,
+            the content may not be modified, and the original author must
+            be credited.\par}
+        };
+    \end{tikzpicture}
+    \endgroup
+}
+
+\begin{document}
+
+\PortfolioCover
+
+\clearpage
+\pagestyle{empty}
+\pagenumbering{gobble}
+\vspace*{\fill}
+\tableofcontents
+\vspace*{\fill}
+
+\clearpage
+\pagenumbering{arabic}
+\pagestyle{fancy}
+\raggedright
+
+$body$
+
+\portfoliolicense
+
+\end{document}
